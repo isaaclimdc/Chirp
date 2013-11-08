@@ -1,11 +1,14 @@
 #!/bin/bash
 
-mv index.html index.php
+if [ ! -f index.php && -f index.html ]
+then mv index.html index.php
+fi
+
 git add *
 
-MSG="..."
-if [$1 -neq ""]
-then $MSG=$1
+if [ -z $1 ]
+then MSG="..."
+else MSG=$1
 fi
 
 git commit -a --m $MSG
