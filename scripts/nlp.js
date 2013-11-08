@@ -11,11 +11,20 @@ function findAllTweets() {
 }
 
 function processRawTweets(raw) {
-    console.log(raw);
+    var tweets = sanitizeTweets(raw);
+    printTweets(tweets);
 
-    allTweets = [];
+    displayTweets(tweets);
+}
 
-    return allTweets;
+function displayTweets(tweets) {
+    $("#dispTweets").empty();
+
+    for (var i = 0; i < tweets.length; i++) {
+        var row = $("<p>");
+        row.text(tweets[i]);
+        $("#dispTweets").append(row);
+    }
 }
 
 function queryTwitter(emot, obj) {
@@ -24,6 +33,7 @@ function queryTwitter(emot, obj) {
         dataType: 'jsonp',
         data: {
             q: emot + " " + obj,
+            count: 200
         },
         success: function(data, textStatus, xhr) {
             console.log("Success!")
@@ -35,4 +45,18 @@ function queryTwitter(emot, obj) {
             console.log("Error: " + error);
         },
     });
+}
+
+function sanitizeTweets(raw) {
+    var res = [];
+    for (var i = 0; i < raw.length; i++) {
+        res[i] = raw[i]["text"];
+    }
+    return res;
+}
+
+function printTweets(raw) {
+    for (var i = 0; i < raw.length; i++) {
+        console.log(raw[i]);
+    }
 }
