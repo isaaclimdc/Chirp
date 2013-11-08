@@ -1,5 +1,13 @@
+#!/bin/bash
+
 mv index.html index.php
 git add *
-git commit -a --m "..."
+
+MSG="..."
+if [$1 -neq ""]
+then MSG=$1
+fi
+
+git commit -a --m msg
 git push heroku master
 mv index.php index.html
