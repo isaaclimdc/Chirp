@@ -13,7 +13,7 @@ function findAllTweets(emot, obj) {
     $.ajax({
         url:'http://emotionalapi.herokuapp.com/1.1/search/tweets.json',
         type: 'GET',
-        // dataType: 'jsonp',
+        dataType: 'jsonp',
         data: {
             q: emot + obj,
             // page : 1,
