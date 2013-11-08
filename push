@@ -5,9 +5,9 @@ git add *
 
 MSG="..."
 if [$1 -neq ""]
-then MSG=$1
+then $MSG=$1
 fi
 
-git commit -a --m msg
+git commit -a --m $MSG
 git push heroku master
 mv index.php index.html

@@ -33,7 +33,7 @@ function queryTwitter(emot, obj) {
         dataType: 'jsonp',
         data: {
             q: emot + " " + obj,
-            count: 200
+            count: 200 
         },
         success: function(data, textStatus, xhr) {
             console.log("Success!")
