@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ ! -f index.php && -f index.html ]
+if [ ! -f index.php ] && [ -f index.html ]
 then mv index.html index.php
 fi
 
