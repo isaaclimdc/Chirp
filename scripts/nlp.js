@@ -1,35 +1,38 @@
 $(document).ready(function($) {
-    var queryParts = ["hate", "bananas"];
-    findAllTweets(queryParts[0], queryParts[1])
+    queryTwitter("Love", "Bananas");
 });
 
+function findAllTweets() {
+    var formData = $("#inputForm").serializeArray();
+    var emot = formData[0]["value"];
+    var obj = formData[1]["value"];
+
+    queryTwitter(emot, obj);
+}
+
 function processRawTweets(raw) {
+    console.log(raw);
+
     allTweets = [];
 
     return allTweets;
 }
 
-function findAllTweets(emot, obj) {
+function queryTwitter(emot, obj) {
     $.ajax({
         url:'http://emotionalapi.herokuapp.com/1.1/search/tweets.json',
-        type: 'GET',
         dataType: 'jsonp',
         data: {
-            q: emot + obj,
-            // page : 1,
-            // rpp :  4
+            q: emot + " " + obj,
         },
         success: function(data, textStatus, xhr) {
-            console.log("Success!: " + data);
+            console.log("Success!")
+            var tweets = data["statuses"];
 
-            processRawTweets(data)
+            processRawTweets(tweets);
         },
         error: function(xhr,status,error) {
             console.log("Error: " + error);
         },
     });
 }
-
-
-
-

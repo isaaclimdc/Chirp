@@ -9,7 +9,13 @@
 </head>
 
 <body>
-  Content here
+  <form id="inputForm">
+    Emotion: <input type="text" name="inputEmotion"><br>
+    Object: <input type="text" name="inputObject"><br>
+  </form>
+  <div onClick="findAllTweets()">
+    <h2>Go!</h2>
+  </div>
 </body>
 
 </html>
