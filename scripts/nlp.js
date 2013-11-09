@@ -1,42 +1,78 @@
-$(document).ready(function($) {
-    queryTwitter("Love", "Bananas");
-});
+/* Objects */
 
-function findAllTweets() {
-    var formData = $("#inputForm").serializeArray();
-    var emot = formData[0]["value"];
-    var obj = formData[1]["value"];
-
-    queryTwitter(emot, obj);
+function TwitterUser(handle, name, picURL) {
+    this.handle = handle;
+    this.name = name;
+    this.picURL = picURL;
 }
 
-function processRawTweets(raw) {
-    var tweets = sanitizeTweets(raw);
-    printTweets(tweets);
+function Tweet(text, date, user) {
+    this.text = text;
+    this.date = date;
+    this.user = user;
+}
 
-    displayTweets(tweets);
+/* Functions */
+
+$(document).ready(function($) {
+    findAllTweets("Hate", "Life");
+});
+
+function findAllTweets(emot, obj) {
+    if (emot === undefined && obj === undefined) {
+        var formData = $("#inputForm").serializeArray();
+        emot = formData[0]["value"];
+        obj = formData[1]["value"];
+    }
+
+    emot = emot.toLowerCase();
+    obj = obj.toLowerCase();
+
+    var type = classifyEmotion(emot);
+
+    queryTwitter(emot, obj, type);
 }
 
 function displayTweets(tweets) {
     $("#dispTweets").empty();
 
     for (var i = 0; i < tweets.length; i++) {
+        var tweet = tweets[i];
+        var user = tweet.user;
+        // var str = "@" + user.handle + ": " + tweet.text;
+        var str = tweet.text;
+
         var row = $("<p>");
-        row.text(tweets[i]);
+        row.text(str);
         $("#dispTweets").append(row);
     }
 }
 
-function queryTwitter(emot, obj) {
+function queryTwitter(emot, obj, type) {
+    // ' Love "Obama :)" '
+    var query = emot + "+" + "%22" + obj + "%22"; 
+
+    if (type) { /* Positive attitude */
+        console.log("Positive emotion!");
+        query = query + "+" + "%3A%29";
+    }
+    else { /* Negative attitude */
+        console.log("Negative emotion!");
+        query = query + "+" + "%3A%28";
+    }
+    console.log(query);
+
     $.ajax({
         url:'http://emotionalapi.herokuapp.com/1.1/search/tweets.json',
         dataType: 'jsonp',
         data: {
-            q: emot + " " + obj,
-            count: 200 
+            q: query,
+            count: 200,
+            lang: "en"
         },
         success: function(data, textStatus, xhr) {
-            console.log("Success!")
+            // console.log("Success!")
+            console.log(data);
             var tweets = data["statuses"];
 
             processRawTweets(tweets);
@@ -47,16 +83,82 @@ function queryTwitter(emot, obj) {
     });
 }
 
-function sanitizeTweets(raw) {
+/* Parsing */
+
+function processRawTweets(raw) {
+    var tweets = toTweetObjects(raw);
+    printTweets(tweets);
+
+    displayTweets(tweets);
+}
+
+function toTweetObjects(raw) {
     var res = [];
+    
     for (var i = 0; i < raw.length; i++) {
-        res[i] = raw[i]["text"];
+        var origTweet = raw[i];
+        var rootTweet = unRTTweet(origTweet);
+
+        var userDict = rootTweet["user"];
+        var user = new TwitterUser(userDict["screen_name"],
+                                   userDict["name"],
+                                   userDict["profile_image_url"]);
+
+        var tw = new Tweet(rootTweet["text"],
+                           rootTweet["created_at"], 
+                           user);
+
+        if (!res.containsTweet(tw)) {
+            res.push(tw);
+        }
     }
+
     return res;
 }
 
-function printTweets(raw) {
-    for (var i = 0; i < raw.length; i++) {
-        console.log(raw[i]);
+/* tweet: Original tweet object, not "Tweet" */
+function unRTTweet(tweet) {
+    var origTweet = tweet["retweeted_status"];
+    if (origTweet !== undefined) {
+        return origTweet;
     }
+    return tweet;
+}
+
+/* NLP Stuff */
+
+var posEmots = ["love", "like", "enjoy", "adore", "want"];
+var negEmots = ["hate", "dislike", "regret", "loathe", "despise"];
+
+/* false -> negative, true -> positive */
+function classifyEmotion(emot) {
+    if (negEmots.contains(emot)) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+/* Helpers */
+
+function printTweets(tweets) {
+    for (var i = 0; i < tweets.length; i++) {
+        var tweet = tweets[i];
+        var user = tweet.user;
+        console.log("@" + user.handle + ": " + tweet.text);
+    }
+}
+
+Array.prototype.contains = function(obj) {
+    return this.indexOf(obj) > -1;
+}
+
+Array.prototype.containsTweet = function(obj) {
+    for (var i = 0; i < this.length; i++) {
+        if (this[i].text === obj.text) {
+            return true;
+        }
+    }
+    return false;
 }
