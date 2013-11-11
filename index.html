@@ -9,11 +9,14 @@
 </head>
 
 <body>
+  <div style="float:right; cursor:pointer">
+    <h3>Login with Twitter</h3>
+  </div>
   <form id="inputForm">
     Emotion: <input type="text" name="inputEmotion"><br>
     Object: <input type="text" name="inputObject"><br>
   </form>
-  <div onClick="findAllTweets()">
+  <div onClick="findAllTweets()" style="cursor:pointer">
     <h2>Go!</h2>
   </div>
   <div id="dispTweets">
