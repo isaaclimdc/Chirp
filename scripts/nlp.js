@@ -1,3 +1,7 @@
+/* Globals */
+
+var chirpBaseURL = "http://chirpapi.herokuapp.com/"
+
 /* Objects */
 
 function TwitterUser(handle, name, picURL) {
@@ -63,7 +67,7 @@ function queryTwitter(emot, obj, type) {
     console.log(query);
 
     $.ajax({
-        url:'http://emotionalapi.herokuapp.com/1.1/search/tweets.json',
+        url: chirpBaseURL + '/1.1/search/tweets.json',
         dataType: 'jsonp',
         data: {
             q: query,
@@ -72,7 +76,7 @@ function queryTwitter(emot, obj, type) {
         },
         success: function(data, textStatus, xhr) {
             // console.log("Success!")
-            console.log(data);
+            // console.log(data);
             var tweets = data["statuses"];
 
             processRawTweets(tweets);
