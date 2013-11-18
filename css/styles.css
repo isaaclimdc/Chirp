@@ -1,0 +1,150 @@
+body {
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 42pt;
+  margin-top: 100px;
+  margin-bottom: -65px;
+  font-family: 'Ruda',sans-serif;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+h2 {
+  font-size: 26pt;
+  margin-top: 100px;
+  font-family: 'Ruda',sans-serif;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: -50px;
+}
+
+#typeIn{
+	float: left;
+	top: 800px;
+}
+
+#inputForm{
+  float: left;	
+  margin-left: 30px;
+  display: inline;
+}
+
+.form-field {
+  float: left;
+  border: 0px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.2);
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  padding:5px;
+  padding-left: 12px;
+  margin-bottom:20px;
+  font-size: 26pt;
+  color:rgba(255,255,255,0.9);
+  font-family:'Ruda',sans-serif; font-weight:700;
+}
+
+.form-field:focus {
+  background-color: rgba(255,255,255,0.1);
+  outline-color: transparent;
+  outline-style: none;
+}
+
+::-webkit-input-placeholder { /* WebKit browsers */
+  color:rgba(255,255,255,0.3);
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+  color:rgba(255,255,255,0.3);
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+  color:rgba(255,255,255,0.3);
+}
+:-ms-input-placeholder { /* Internet Explorer 10+ */
+  color:rgba(255,255,255,0.3);
+}
+
+#feeling {
+  width: 400px;
+  position: relative;
+  float: left;
+}
+
+#object {
+  width: 400px;
+  position: relative;
+  float: left;
+}
+
+#chirpButton {
+  border:1px rgba(0,0,0,0.2);
+  background: -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0.3)), to(rgba(255,255,255,0.1)));
+  background: -webkit-linear-gradient(top, rgba(255,255,255,0.3),rgba(255,255,255,0.1));
+  background: -moz-linear-gradient(top, rgba(255,255,255,0.3),rgba(255,255,255,0.1));
+  background: -ms-linear-gradient(top, rgba(255,255,255,0.3),rgba(255,255,255,0.1));
+  background: -o-linear-gradient(top, rgba(255,255,255,0.3),rgba(255,255,255,0.1));
+
+  float: left;
+  margin-left: 30px;
+  -webkit-border-radius: 40px;
+  -moz-border-radius: 40px;
+  border-radius: 40px;
+
+  color: white;
+  font-family: 'Ruda',sans-serif;
+  font-weight: 700;
+  padding: 1px;
+  font-size: 42px;
+  text-decoration: none;
+  vertical-align: middle;
+  cursor: pointer;
+
+  width: 60px;
+  height: 60px;
+}
+
+#chirpButton:hover {
+  background: -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0.4)), to(rgba(255,255,255,0.1)));
+  background: -webkit-linear-gradient(top, rgba(255,255,255,0.4),rgba(255,255,255,0.1));
+  background: -moz-linear-gradient(top, rgba(255,255,255,0.4),rgba(255,255,255,0.1));
+  background: -ms-linear-gradient(top, rgba(255,255,255,0.4),rgba(255,255,255,0.1));
+  background: -o-linear-gradient(top, rgba(255,255,255,0.4),rgba(255,255,255,0.1));
+  color: #fff;
+}
+
+#chirpButton:active {
+  background: -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0.1)), to(rgba(255,255,255,0.4)));
+  background: -webkit-linear-gradient(top, rgba(255,255,255,0.1),rgba(255,255,255,0.4));
+  background: -moz-linear-gradient(top, rgba(255,255,255,0.1),rgba(255,255,255,0.4));
+  background: -ms-linear-gradient(top, rgba(255,255,255,0.1),rgba(255,255,255,0.4));
+  background: -o-linear-gradient(top, rgba(255,255,255,0.1),rgba(255,255,255,0.4));
+  color: #fff;
+  outline-color: transparent;
+  outline-style: none;
+}
+
+.besmaller {
+  font-size: 1em;
+}
+
+#dispTweets {
+  width: 420px; 
+  margin-top: 150px;
+  font-size: 1em;
+  font-family: 'Ruda', sans-serif;
+  font-weight: 400;
+  color: #ffffff;
+  margin-left: 100px;
+  opacity: 0;
+}
+
+#dispTweets .dispSingleTweet {
+  margin-bottom: 40px;
+}
+
+#dispTweets .dispSingleTweet .tweetUser {
+  margin-top: -10px;
+  color: rgba(255,255,255,0.5);
+}

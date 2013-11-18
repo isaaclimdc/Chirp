@@ -1,6 +1,13 @@
 /* Globals */
 
-var chirpBaseURL = "http://chirpapi.herokuapp.com/"
+var chirpBaseURL = "http://chirpapi.herokuapp.com/";
+var bkgColors = ["#e25f3b",
+                 "#f06a92",
+                 "#a435b7",
+                 "#375edb",
+                 "#fbb647",
+                 "#02c987",
+                 "#30c2e6"];
 
 /* Objects */
 
@@ -19,14 +26,68 @@ function Tweet(text, date, user) {
 /* Functions */
 
 $(document).ready(function($) {
-    findAllTweets("Hate", "Life");
+    randomizeBackground();
 });
+
+function shrinkForm() {
+    $("h1").animate({
+      fontSize:"2em",
+      marginBottom:"10px",
+      marginTop: "60px",
+      /* opacity:"0", */
+    });
+    $("h2").animate({
+    marginTop:"10px",
+    });
+    $("#subheaderI").animate({
+      fontSize:"1em",
+      marginBottom:"5px",
+    });
+    $("#feeling").animate({  
+      fontSize:"1em",  
+      marginBottom:"6px",
+      marginTop:"-30px",
+      marginLeft:"-15px",
+      width: "85%",
+    });
+    $("#object").animate({
+      fontSize:"1em",
+      marginBottom:"12px",
+      marginTop:"0px",
+      marginLeft:"-15px",
+      width: "85%",
+    });
+    $("#chirpButton").animate({
+      marginLeft:"-3%",
+      marginTop: "7px",
+    });
+    $("img").animate({
+    opacity:"0",
+    });
+    $("#dispTweets").delay(500).animate({
+      opacity:"1",
+      marginLeft:"15px",
+    },700, 'easeOutCirc');
+    $("#dispTweets").delay(800).animate({
+      opacity:"1",
+      marginLeft:"15px",
+    },700, 'easeOutCirc');
+}
+
+function randomizeBackground() {
+    var bkgColIdx = Math.floor(Math.random()*bkgColors.length);
+    var chosenBkgCol = bkgColors[bkgColIdx];
+    $('body').css("background", chosenBkgCol);
+}
 
 function findAllTweets(emot, obj) {
     if (emot === undefined && obj === undefined) {
         var formData = $("#inputForm").serializeArray();
+        console.log(formData);
         emot = formData[0]["value"];
         obj = formData[1]["value"];
+
+        shrinkForm();
     }
 
     emot = emot.toLowerCase();
@@ -38,17 +99,28 @@ function findAllTweets(emot, obj) {
 }
 
 function displayTweets(tweets) {
+    // return 0;
     $("#dispTweets").empty();
 
     for (var i = 0; i < tweets.length; i++) {
         var tweet = tweets[i];
-        var user = tweet.user;
-        // var str = "@" + user.handle + ": " + tweet.text;
-        var str = tweet.text;
+        var user = "@" + tweet.user.handle;
+        var text = tweet.text;
 
-        var row = $("<p>");
-        row.text(str);
-        $("#dispTweets").append(row);
+        var box = $("<div>");
+        box.attr("class", "dispSingleTweet");
+
+        var tweetText = $("<p>");
+        tweetText.text(text);
+        tweetText.attr("class", "tweetText");
+        box.append(tweetText);
+
+        var tweetUser = $("<p>");
+        tweetUser.text(user);
+        tweetUser.attr("class", "tweetUser");
+        box.append(tweetUser);
+
+        $("#dispTweets").append(box);
     }
 }
 
