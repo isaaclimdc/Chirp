@@ -31,17 +31,23 @@
       </form>
     </div>
     
-    <div id="chirpButton" class="form-field2" onClick="keepFindingAllTweets()">
+    <div id="chirpButton" class="form-field2" onClick="findAllTweets()">
       <img src="img/chirp_logo1.png" height="50px" style="margin:5px">
     </div>
   </div>
 
   <div id="dispTweets">
-    <!-- Sample entry styling -->
+    <!-- Sample tweet entry styling -->
 <!--     <div class="dispSingleTweet">
       <p class="tweetText">Hello there hello there this is just a silly sample tweet!</p>
       <p class="tweetUser">@isaaclimdc</p>
     </div> -->
+  </div>
+
+  <div id="dispTrending">
+    <h2 id="trendingTitle">Trending searches</h2>
+    <!-- Sample trending entry styling -->
+    <!-- <h3 onClick="findTweetsFromTrendingTerm('Like Apple');">Like Apple</h3> -->
   </div>
 </body>
 

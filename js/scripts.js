@@ -48,10 +48,11 @@ function Tweet(text, date, user) {
 
 $(document).ready(function($) {
     randomizeBackground();
+    getTrendingList();
 
     $("#object").keyup(function(event) {
         if (event.keyCode == 13) {
-            keepFindingAllTweets();
+            findAllTweets();
         }
     });
 
@@ -98,33 +99,40 @@ function randomizeBackground() {
     $('body').css("background", chosenBkgCol);
 }
 
-function keepFindingAllTweets(emot, obj) {
-    getTrendingList();
-
-    /* Fetch new tweets every 10 seconds */
-    window.clearInterval(tweetTimer);
-    findAllTweets();
-    tweetTimer = window.setInterval(function() {
-        findAllTweets();
-    }, 10000);
-}
-
-function findAllTweets() {
+function findAllTweets(emot, obj) {
     var target = document.getElementById('dispTweets');
     var spinner = new Spinner(spinnerOpts).spin(target);
 
-    var formData = $("#inputForm").serializeArray();
-    var emot = formData[0]["value"].toLowerCase();
-    var obj = formData[1]["value"].toLowerCase();
+    if (emot === undefined && obj === undefined) {
+        var formData = $("#inputForm").serializeArray();
+        emot = formData[0]["value"].toLowerCase();
+        obj = formData[1]["value"].toLowerCase();
 
-    if (emot.length == 0 || obj.length == 0) {
-        return;
+        if (emot.length == 0 || obj.length == 0) {
+            return;
+        }
     }
 
     shrinkForm();
 
+    /* Perform the actual search */
     var type = classifyEmotion(emot);
+
+    /* Augment trending database */
+    addQueryToTrending(emot, obj);
+
+    /* Fetch new tweets every 10 seconds */
     queryTwitter(emot, obj, type);
+    window.clearInterval(tweetTimer);
+    tweetTimer = window.setInterval(function() {
+        queryTwitter(emot, obj, type);
+        getTrendingList();
+    }, 10000);
+}
+
+function findTweetsFromTrendingTerm(raw) {
+    var terms = raw.split(" ");
+    findAllTweets(terms[0], terms[1])
 }
 
 function displayTweets(tweets) {
@@ -149,6 +157,21 @@ function displayTweets(tweets) {
         box.append(tweetUser);
 
         $("#dispTweets").append(box);
+    }
+}
+
+function displayTrending(terms) {
+    $('#dispTrending').contents().filter(function () {
+        return this.id != "trendingTitle";
+    }).remove();
+
+    for (var i = 0; i < terms.length; i++) {
+        var term = terms[i];
+        var h3 = $("<h3>");
+        h3.attr("onClick", "findTweetsFromTrendingTerm('" + term + "');");
+        h3.html(term);
+
+        $("#dispTrending").append(h3);
     }
 }
 
@@ -188,26 +211,36 @@ function queryTwitter(emot, obj, type) {
 }
 
 function getTrendingList() {
-    console.log("Getting trending list...");
+    $.ajax({
+        url: chirpTrendingAPIBaseURL + '/getTrending',
+        data: {
+            "limit" : 7
+        },
+        success: function(data, textStatus, xhr) {
+            var trendingTerms = data["data"];
+            console.log("Success!", trendingTerms);
+            displayTrending(trendingTerms);
+        },
+        error: function(xhr,status,error) {
+            console.log("Error: " + error);
+        },
+    });
+}
 
-    // $.ajax({
-    //     url: chirpTrendingAPIBaseURL + '/getTrending',
-    //     dataType: 'jsonp',
-    //     type: 'post',
-    //     contentType: 'application/json',
-    //     data: {
-    //         "limit" : 10
-    //     },
-    //     success: function(data, textStatus, xhr) {
-    //         console.log("Success!", data);
-    //     },
-    //     error: function(xhr,status,error) {
-    //         console.log("Error: " + error);
-    //     },
-    // });
-
-    $.getJSON( chirpTrendingAPIBaseURL + '/getTrending', function( data ) {
-        console.log(data);
+function addQueryToTrending(emot, obj) {
+    $.ajax({
+        url: chirpTrendingAPIBaseURL + '/addQuery',
+        data: {
+            "emot" : emot,
+            "obj" : obj
+        },
+        success: function(data, textStatus, xhr) {
+            console.log("Success!", data);
+            getTrendingList();
+        },
+        error: function(xhr,status,error) {
+            console.log("Error: " + error);
+        },
     });
 }
 
@@ -236,7 +269,7 @@ function toTweetObjects(raw) {
                            rootTweet["created_at"], 
                            user);
 
-        if (!res.containsTweet(tw)) {
+        if (!containsTweet(res, tw)) {
             res.push(tw);
         }
     }
@@ -260,7 +293,7 @@ var negEmots = ["hate", "dislike", "regret", "loathe", "despise"];
 
 /* false -> negative, true -> positive */
 function classifyEmotion(emot) {
-    if (negEmots.contains(emot)) {
+    if (contains(negEmots, emot)) {
         return false;
     }
     else {
@@ -283,13 +316,13 @@ function printTweets(tweets) {
     }
 }
 
-Array.prototype.contains = function(obj) {
-    return this.indexOf(obj) > -1;
+function contains(arr, obj) {
+    return arr.indexOf(obj) > -1;
 }
 
-Array.prototype.containsTweet = function(obj) {
-    for (var i = 0; i < this.length; i++) {
-        if (this[i].text === obj.text) {
+function containsTweet(arr, obj) {
+    for (var i = 0; i < arr.length; i++) {
+        if (arr[i].text === obj.text) {
             return true;
         }
     }
