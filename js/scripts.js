@@ -1,6 +1,7 @@
 /* Globals */
 
-var chirpBaseURL = "http://chirpapi.herokuapp.com/";
+var chirpAPIBaseURL = "http://chirpapi.herokuapp.com";
+var chirpTrendingAPIBaseURL = "http://chirptrending.herokuapp.com";
 var bkgColors = ["#e25f3b",
                  "#f06a92",
                  "#a435b7",
@@ -98,33 +99,29 @@ function randomizeBackground() {
 }
 
 function keepFindingAllTweets(emot, obj) {
-    window.clearInterval(tweetTimer)
+    getTrendingList();
 
     /* Fetch new tweets every 10 seconds */
+    window.clearInterval(tweetTimer);
+    findAllTweets();
     tweetTimer = window.setInterval(function() {
         findAllTweets();
     }, 10000);
 }
 
-function findAllTweets(emot, obj) {
-    console.log("findTweets");
+function findAllTweets() {
     var target = document.getElementById('dispTweets');
     var spinner = new Spinner(spinnerOpts).spin(target);
 
-    if (emot === undefined && obj === undefined) {
-        var formData = $("#inputForm").serializeArray();
-        emot = formData[0]["value"];
-        obj = formData[1]["value"];
+    var formData = $("#inputForm").serializeArray();
+    var emot = formData[0]["value"].toLowerCase();
+    var obj = formData[1]["value"].toLowerCase();
 
-        if (emot.length == 0 || obj.length == 0) {
-            return;
-        }
+    if (emot.length == 0 || obj.length == 0) {
+        return;
     }
 
     shrinkForm();
-
-    emot = emot.toLowerCase();
-    obj = obj.toLowerCase();
 
     var type = classifyEmotion(emot);
     queryTwitter(emot, obj, type);
@@ -170,7 +167,7 @@ function queryTwitter(emot, obj, type) {
     // console.log(query);
 
     $.ajax({
-        url: chirpBaseURL + '/1.1/search/tweets.json',
+        url: chirpAPIBaseURL + '/1.1/search/tweets.json',
         dataType: 'jsonp',
         data: {
             q: query,
@@ -187,6 +184,30 @@ function queryTwitter(emot, obj, type) {
         error: function(xhr,status,error) {
             console.log("Error: " + error);
         },
+    });
+}
+
+function getTrendingList() {
+    console.log("Getting trending list...");
+
+    // $.ajax({
+    //     url: chirpTrendingAPIBaseURL + '/getTrending',
+    //     dataType: 'jsonp',
+    //     type: 'post',
+    //     contentType: 'application/json',
+    //     data: {
+    //         "limit" : 10
+    //     },
+    //     success: function(data, textStatus, xhr) {
+    //         console.log("Success!", data);
+    //     },
+    //     error: function(xhr,status,error) {
+    //         console.log("Error: " + error);
+    //     },
+    // });
+
+    $.getJSON( chirpTrendingAPIBaseURL + '/getTrending', function( data ) {
+        console.log(data);
     });
 }
 
