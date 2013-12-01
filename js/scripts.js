@@ -8,6 +8,26 @@ var bkgColors = ["#e25f3b",
                  "#fbb647",
                  "#02c987",
                  "#30c2e6"];
+var tweetTimer;
+
+var spinnerOpts = {
+    lines: 11, // The number of lines to draw
+    length: 0, // The length of each line
+    width: 9, // The line thickness
+    radius: 19, // The radius of the inner circle
+    corners: 1, // Corner roundness (0..1)
+    rotate: 0, // The rotation offset
+    direction: 1, // 1: clockwise, -1: counterclockwise
+    color: '#000', // #rgb or #rrggbb or array of colors
+    speed: 1, // Rounds per second
+    trail: 60, // Afterglow percentage
+    shadow: false, // Whether to render a shadow
+    hwaccel: false, // Whether to use hardware acceleration
+    className: 'spinner', // The CSS class to assign to the spinner
+    zIndex: 2e9, // The z-index (defaults to 2000000000)
+    top: 'auto', // Top position relative to parent in px
+    left: 'auto' // Left position relative to parent in px
+};
 
 /* Objects */
 
@@ -27,50 +47,47 @@ function Tweet(text, date, user) {
 
 $(document).ready(function($) {
     randomizeBackground();
+
+    $("#object").keyup(function(event) {
+        if (event.keyCode == 13) {
+            keepFindingAllTweets();
+        }
+    });
+
+    $('#chirpButton img').hover(function() {
+        $(this).attr('src', 'img/chirp_logo2.png');
+    }, function() {
+        $(this).attr('src', 'img/chirp_logo1.png');
+    });
 });
 
 function shrinkForm() {
+    var smallHeaderFont = "2em";
+    var smallSubheaderFont = "1em";
+
     $("h1").animate({
-      fontSize:"2em",
-      marginBottom:"10px",
-      marginTop: "60px",
-      /* opacity:"0", */
-    });
-    $("h2").animate({
-    marginTop:"10px",
+      fontSize: smallHeaderFont,
+      marginBottom: "0%",
+      marginTop: "10%"
     });
     $("#subheaderI").animate({
-      fontSize:"1em",
-      marginBottom:"5px",
+      fontSize: smallHeaderFont,
+      marginTop: "1%"
     });
     $("#feeling").animate({  
-      fontSize:"1em",  
-      marginBottom:"6px",
-      marginTop:"-30px",
-      marginLeft:"-15px",
-      width: "85%",
+      fontSize: smallSubheaderFont,
+      marginTop: "5%"
     });
     $("#object").animate({
-      fontSize:"1em",
-      marginBottom:"12px",
-      marginTop:"0px",
-      marginLeft:"-15px",
-      width: "85%",
+      fontSize: smallSubheaderFont,
     });
     $("#chirpButton").animate({
-      marginLeft:"-3%",
-      marginTop: "7px",
+      marginLeft: "75%",
+      marginTop: "-17%"
     });
-    $("img").animate({
-    opacity:"0",
-    });
-    $("#dispTweets").delay(500).animate({
-      opacity:"1",
-      marginLeft:"15px",
-    },700, 'easeOutCirc');
-    $("#dispTweets").delay(800).animate({
-      opacity:"1",
-      marginLeft:"15px",
+    $("#dispTweets").delay(300).animate({
+      opacity: "1.0",
+      marginLeft: "0%"
     },700, 'easeOutCirc');
 }
 
@@ -80,38 +97,52 @@ function randomizeBackground() {
     $('body').css("background", chosenBkgCol);
 }
 
+function keepFindingAllTweets(emot, obj) {
+    window.clearInterval(tweetTimer)
+
+    /* Fetch new tweets every 10 seconds */
+    tweetTimer = window.setInterval(function() {
+        findAllTweets();
+    }, 10000);
+}
+
 function findAllTweets(emot, obj) {
+    console.log("findTweets");
+    var target = document.getElementById('dispTweets');
+    var spinner = new Spinner(spinnerOpts).spin(target);
+
     if (emot === undefined && obj === undefined) {
         var formData = $("#inputForm").serializeArray();
-        console.log(formData);
         emot = formData[0]["value"];
         obj = formData[1]["value"];
 
-        shrinkForm();
+        if (emot.length == 0 || obj.length == 0) {
+            return;
+        }
     }
+
+    shrinkForm();
 
     emot = emot.toLowerCase();
     obj = obj.toLowerCase();
 
     var type = classifyEmotion(emot);
-
     queryTwitter(emot, obj, type);
 }
 
 function displayTweets(tweets) {
-    // return 0;
     $("#dispTweets").empty();
 
     for (var i = 0; i < tweets.length; i++) {
         var tweet = tweets[i];
         var user = "@" + tweet.user.handle;
-        var text = tweet.text;
+        var text = replaceURLWithHTMLLinks(tweet.text);
 
         var box = $("<div>");
         box.attr("class", "dispSingleTweet");
 
         var tweetText = $("<p>");
-        tweetText.text(text);
+        tweetText.html(text);
         tweetText.attr("class", "tweetText");
         box.append(tweetText);
 
@@ -129,21 +160,21 @@ function queryTwitter(emot, obj, type) {
     var query = emot + "+" + "%22" + obj + "%22"; 
 
     if (type) { /* Positive attitude */
-        console.log("Positive emotion!");
+        // console.log("Positive emotion!");
         query = query + "+" + "%3A%29";
     }
     else { /* Negative attitude */
-        console.log("Negative emotion!");
+        // console.log("Negative emotion!");
         query = query + "+" + "%3A%28";
     }
-    console.log(query);
+    // console.log(query);
 
     $.ajax({
         url: chirpBaseURL + '/1.1/search/tweets.json',
         dataType: 'jsonp',
         data: {
             q: query,
-            count: 200,
+            count: 50,
             lang: "en"
         },
         success: function(data, textStatus, xhr) {
@@ -163,7 +194,7 @@ function queryTwitter(emot, obj, type) {
 
 function processRawTweets(raw) {
     var tweets = toTweetObjects(raw);
-    printTweets(tweets);
+    // printTweets(tweets);
 
     displayTweets(tweets);
 }
@@ -217,6 +248,11 @@ function classifyEmotion(emot) {
 }
 
 /* Helpers */
+
+function replaceURLWithHTMLLinks(text) {
+    var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+    return text.replace(exp,"<a href='$1'>$1</a>"); 
+}
 
 function printTweets(tweets) {
     for (var i = 0; i < tweets.length; i++) {
