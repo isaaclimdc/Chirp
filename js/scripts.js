@@ -10,6 +10,7 @@ var bkgColors = ["#e25f3b",
                  "#02c987",
                  "#30c2e6"];
 var tweetTimer;
+var currentlyDisplayedTweets;
 
 var spinnerOpts = {
     lines: 11, // The number of lines to draw
@@ -19,7 +20,7 @@ var spinnerOpts = {
     corners: 1, // Corner roundness (0..1)
     rotate: 0, // The rotation offset
     direction: 1, // 1: clockwise, -1: counterclockwise
-    color: '#000', // #rgb or #rrggbb or array of colors
+    color: '#fff', // #rgb or #rrggbb or array of colors
     speed: 1, // Rounds per second
     trail: 60, // Afterglow percentage
     shadow: false, // Whether to render a shadow
@@ -38,10 +39,18 @@ function TwitterUser(handle, name, picURL) {
     this.picURL = picURL;
 }
 
+TwitterUser.prototype.equals = function(other) {
+    return this.handle === other.handle;
+}
+
 function Tweet(text, date, user) {
     this.text = text;
     this.date = date;
     this.user = user;
+}
+
+Tweet.prototype.equals = function(other) {
+    return this.text === other.text && this.user.equals(other.user);
 }
 
 /* Functions */
@@ -74,11 +83,10 @@ function shrinkForm() {
     });
     $("#subheaderI").animate({
       fontSize: smallHeaderFont,
-      marginTop: "1%"
+      marginTop: "-5%"
     });
     $("#feeling").animate({  
       fontSize: smallSubheaderFont,
-      marginTop: "5%"
     });
     $("#object").animate({
       fontSize: smallSubheaderFont,
@@ -122,10 +130,10 @@ function findAllTweets(emot, obj) {
     addQueryToTrending(emot, obj);
 
     /* Fetch new tweets every 10 seconds */
-    queryTwitter(emot, obj, type);
+    queryTwitter(emot, obj, type, function(tweets) { displayTweets(tweets); });
     window.clearInterval(tweetTimer);
     tweetTimer = window.setInterval(function() {
-        queryTwitter(emot, obj, type);
+        queryTwitter(emot, obj, type, function(tweets) { updateNewTweetsBar(tweets); });
         getTrendingList();
     }, 10000);
 }
@@ -140,7 +148,7 @@ function findTweetsFromTrendingTerm(raw) {
 }
 
 function displayTweets(tweets) {
-    $("#dispTweets").empty();
+    $('#dispTweets').empty();
 
     for (var i = 0; i < tweets.length; i++) {
         var tweet = tweets[i];
@@ -162,6 +170,39 @@ function displayTweets(tweets) {
 
         $("#dispTweets").append(box);
     }
+
+    /* Remember these as the currently displayed tweets */
+    currentlyDisplayedTweets = tweets;
+}
+
+function updateNewTweetsBar(tweets) {
+    var numNew = countNumNew(tweets);
+    var newText = numNew + " new chirp" + (numNew == 1 ? "" : "s");
+    console.log(newText);
+
+    if (numNew == 0) return;
+
+    var existingBar = $("#dispTweets #newTweetsBar");
+    if (existingBar.length == 0) {
+        existingBar = $("<h2>");
+        existingBar.attr("id", "newTweetsBar");
+        existingBar.attr("onClick", "clickedNewTweetsBar();");
+        $("#dispTweets").prepend(existingBar);
+    }
+    
+    existingBar.html(newText);
+}
+
+function clickedNewTweetsBar() {
+    // var fadeTime = 200;
+
+    // $("#dispTweets").animate({
+    //     opacity: "0.0"
+    // }), fadeTime, 'easeOutCirc';
+    findAllTweets();
+    // $("#dispTweets").delay(fadeTime).animate({
+    //     opacity: "1.0"
+    // }, fadeTime, 'easeOutCirc');
 }
 
 function displayTrending(terms) {
@@ -179,7 +220,7 @@ function displayTrending(terms) {
     }
 }
 
-function queryTwitter(emot, obj, type) {
+function queryTwitter(emot, obj, type, successFn) {
     // ' Love "Obama :)" '
     var query = emot + "+" + "%22" + obj + "%22"; 
 
@@ -198,15 +239,13 @@ function queryTwitter(emot, obj, type) {
         dataType: 'jsonp',
         data: {
             q: query,
-            count: 50,
+            count: 30,
             lang: "en"
         },
         success: function(data, textStatus, xhr) {
-            // console.log("Success!")
-            // console.log(data);
-            var tweets = data["statuses"];
-
-            processRawTweets(tweets);
+            var raw = data["statuses"];
+            var tweets = toTweetObjects(raw);
+            successFn(tweets);
         },
         error: function(xhr,status,error) {
             console.log("Error: " + error);
@@ -250,13 +289,6 @@ function addQueryToTrending(emot, obj) {
 
 /* Parsing */
 
-function processRawTweets(raw) {
-    var tweets = toTweetObjects(raw);
-    // printTweets(tweets);
-
-    displayTweets(tweets);
-}
-
 function toTweetObjects(raw) {
     var res = [];
     
@@ -290,6 +322,22 @@ function unRTTweet(tweet) {
     return tweet;
 }
 
+function countNumNew(tweets) {
+    var cnt = 0;
+    for (var i = 0; i < tweets.length; i++) {
+        var contains = false;
+        for (var j = 0; j < currentlyDisplayedTweets.length; j++) {
+            if (tweets[i].equals(currentlyDisplayedTweets[j])) {
+                contains = true;
+            }
+        }
+        if (contains == false) {
+            cnt++;
+        }
+    }
+    return cnt;
+}
+
 /* NLP Stuff */
 
 var posEmots = ["love", "like", "enjoy", "adore", "want"];
@@ -309,7 +357,7 @@ function classifyEmotion(emot) {
 
 function replaceURLWithHTMLLinks(text) {
     var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-    return text.replace(exp,"<a href='$1'>$1</a>"); 
+    return text.replace(exp,"<a href='$1' target='blank'>$1</a>"); 
 }
 
 function printTweets(tweets) {
