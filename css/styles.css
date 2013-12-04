@@ -3,6 +3,7 @@
 body {
   max-width: 560px;
   margin: 0 auto;
+  margin-left: 28%;
   font-family: 'Ruda', sans-serif;
   color: #ffffff;
 }
