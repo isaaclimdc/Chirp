@@ -188,8 +188,8 @@ function shrinkFormSmall() {
       marginTop: "26%",
     },700, 'easeOutCirc');
     $("#chirpButton").animate({
-      marginLeft: "80%",
-      marginTop: "-15%",
+      marginLeft: "78%",
+      marginTop: "-50px",
       height:"50px",
       width:"50px",
     });
