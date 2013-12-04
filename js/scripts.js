@@ -190,8 +190,8 @@ function shrinkFormSmall() {
     $("#chirpButton").animate({
       marginLeft: "75%",
       marginTop: "-12%",
-      height:"40px",
-      width:"40px",
+      // height:"40px",
+      // width:"40px",
     });
     $("img").animate({
       height:"30px",
