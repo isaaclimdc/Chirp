@@ -118,58 +118,11 @@ a {
 
 #dispTweets .dispSingleTweet {
   margin-bottom: 10%;
-  transition: opacity .1s ease-in-out;
-  -moz-transition: opacity .1s ease-in-out;
-  -webkit-transition: opacity .1s ease-in-out;
 }
 
 #dispTweets .dispSingleTweet .tweetUser {
   margin-top: 1%;
   color: rgba(255,255,255,0.5);
-}
-
-#dispTweets .dispSingleTweet:nth-last-child(1) {
-  opacity: 0.1;
-}
-
-#dispTweets .dispSingleTweet:nth-last-child(2) {
-  opacity: 0.2;
-}
-
-#dispTweets .dispSingleTweet:nth-last-child(3) {
-  opacity: 0.3;
-}
-
-#dispTweets .dispSingleTweet:nth-last-child(4) {
-  opacity: 0.4;
-}
-
-#dispTweets .dispSingleTweet:nth-last-child(5) {
-  opacity: 0.5;
-}
-
-#dispTweets .dispSingleTweet:nth-last-child(6) {
-  opacity: 0.6;
-}
-
-#dispTweets .dispSingleTweet:nth-last-child(7) {
-  opacity: 0.7;
-}
-
-#dispTweets .dispSingleTweet:nth-last-child(8) {
-  opacity: 0.8;
-}
-
-#dispTweets .dispSingleTweet:nth-last-child(9) {
-  opacity: 0.9;
-}
-
-#dispTweets .dispSingleTweet:nth-last-child(10) {
-  opacity: 1.0;
-}
-
-#dispTweets .dispSingleTweet:hover {
-  opacity: 1.0;
 }
 
 #dispTweets #newTweetsBar {
