@@ -188,14 +188,14 @@ function shrinkFormSmall() {
       marginTop: "26%",
     },700, 'easeOutCirc');
     $("#chirpButton").animate({
-      marginLeft: "75%",
-      marginTop: "-12%",
-      height:"40px",
-      width:"40px",
+      marginLeft: "80%",
+      marginTop: "-15%",
+      height:"50px",
+      width:"50px",
     });
     $("img").animate({
-      height:"30px",
-      width:"30px",
+      height:"40px",
+      width:"40px",
     });
 }
 
