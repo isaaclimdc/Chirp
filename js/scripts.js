@@ -189,7 +189,7 @@ function shrinkFormSmall() {
     },700, 'easeOutCirc');
     $("#chirpButton").animate({
       marginLeft: "78%",
-      marginTop: "-50px",
+      marginTop: "-55px",
       height:"50px",
       width:"50px",
     });
