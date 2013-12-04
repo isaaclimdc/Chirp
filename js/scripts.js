@@ -1,5 +1,9 @@
 /* Globals */
 
+
+
+
+
 var chirpAPIBaseURL = "http://chirpapi.herokuapp.com";
 var chirpTrendingAPIBaseURL = "http://chirptrending.herokuapp.com";
 var bkgColors = ["#e25f3b",
@@ -72,14 +76,15 @@ $(document).ready(function($) {
     });
 });
 
-function shrinkForm() {
+function shrinkFormLarge() {
     var smallHeaderFont = "2em";
     var smallSubheaderFont = "1em";
 
     $("h1").animate({
       fontSize: smallHeaderFont,
       marginBottom: "0%",
-      marginTop: "10%"
+      marginTop: "10%",
+      marginLeft: "0%",
     });
     $("#subheaderI").animate({
       fontSize: smallHeaderFont,
@@ -93,19 +98,140 @@ function shrinkForm() {
     });
     $("#chirpButton").animate({
       marginLeft: "75%",
-      marginTop: "-17%"
+      marginTop: "-17%",
+      height:"60px",
+      width:"60px",
+    });
+     $("img").animate({
+      height:"50px",
+      width:"50px",
     });
     $("#dispTweets").delay(300).animate({
       opacity: "1.0",
       marginLeft: "0%"
     },700, 'easeOutCirc');
 }
+function shrinkFormMiddle() {
+    var smallHeaderFont = "2.3em";
+    var smallSubheaderFont = "1em";
+    var formFont = "1.5em";
+    $("#inputForm").animate({
+      fontSize: formFont,
+      marginBottom: "0%",
+      marginTop: "10%",
+      marginTop: "-2%"
+    });
+    $("#dispTrending").animate({
+      opacity: "0",
+    });
+   
+    $("h1").animate({
+      fontSize: smallHeaderFont,
+      marginBottom: "0%",
+      marginTop: "10%"
+    });
+    $("#subheaderI").animate({
+      fontSize: formFont,
+      marginTop: "-4%"
+    });
+    $("#feeling").animate({  
+      fontSize: smallSubheaderFont,
+    });
+    $("#object").animate({
+      fontSize: smallSubheaderFont,
+    });
+    $("#chirpButton").animate({
+      marginLeft: "80%",
+      marginTop: "-15%",
+      height:"50px",
+      width:"50px",
+    });
+    $("img").animate({
+      height:"40px",
+      width:"40px",
+    });
+    $("#dispTweets").delay(300).animate({
+      width:"70%",
+      opacity: "1.0",
+      margin: "auto",
+      marginLeft: "18%",
+      marginTop: "26%",
+    },700, 'easeOutCirc');
+}
+function shrinkFormSmall() {
+    var smallHeaderFont = "1.7em";
+    var smallSubheaderFont = "1em";
+    var formFont = "1.5em";
+    $("#inputForm").animate({
+      fontSize: smallSubheaderFont,
+      marginBottom: "0%",
+      marginTop: "-1%",
+      width:"70%"
+
+    });
+    $("h1").animate({
+      fontSize: smallHeaderFont,
+      marginLeft: "10%",
+      marginTop: "10%"
+    });
+    $("#subheaderI").animate({
+      fontSize: smallSubheaderFont,
+      marginTop: "10%"
+    });
+    $("#feeling").animate({  
+      fontSize: smallSubheaderFont,
+    });
+    $("#object").animate({
+      fontSize: smallSubheaderFont,
+    });
+    
+    $("#dispTweets").delay(300).animate({
+      width:"90%",
+      opacity: "1.0",
+      margin: "auto",
+      marginLeft: "5%",
+      marginTop: "26%",
+    },700, 'easeOutCirc');
+    
+    $("#chirpButton").animate({
+      marginLeft: "75%",
+      marginTop: "-12%",
+      height:"40px",
+      width:"40px",
+    });
+    $("img").animate({
+      height:"30px",
+      width:"30px",
+    });
+
+}
+
+
+var counter = 0;
+function myResize(){
+
+   var width_window  = $(window).width();
+   counter++;
+        
+   if (width_window >= 700) {                             
+       shrinkFormLarge();
+   } else if (width_window >= 480){             
+       shrinkFormMiddle();
+   } else {
+	   shrinkFormSmall();    
+   }
+}
+
+
+
+
 
 function randomizeBackground() {
     var bkgColIdx = Math.floor(Math.random()*bkgColors.length);
     var chosenBkgCol = bkgColors[bkgColIdx];
     $('body').css("background", chosenBkgCol);
 }
+
 
 function findAllTweets(emot, obj) {
     var target = document.getElementById('dispTweets');
@@ -120,8 +246,9 @@ function findAllTweets(emot, obj) {
             return;
         }
     }
+   myResize();
 
-    shrinkForm();
+       
 
     /* Perform the actual search */
     var type = classifyEmotion(emot);
@@ -380,3 +507,4 @@ function containsTweet(arr, obj) {
     }
     return false;
 }
+
