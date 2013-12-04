@@ -1,9 +1,5 @@
 /* Globals */
 
-
-
-
-
 var chirpAPIBaseURL = "http://chirpapi.herokuapp.com";
 var chirpTrendingAPIBaseURL = "http://chirptrending.herokuapp.com";
 var bkgColors = ["#e25f3b",
@@ -102,7 +98,7 @@ function shrinkFormLarge() {
       height:"60px",
       width:"60px",
     });
-     $("img").animate({
+    $("img").animate({
       height:"50px",
       width:"50px",
     });
@@ -111,6 +107,7 @@ function shrinkFormLarge() {
       marginLeft: "0%"
     },700, 'easeOutCirc');
 }
+
 function shrinkFormMiddle() {
     var smallHeaderFont = "2.3em";
     var smallSubheaderFont = "1em";
@@ -124,7 +121,6 @@ function shrinkFormMiddle() {
     $("#dispTrending").animate({
       opacity: "0",
     });
-   
     $("h1").animate({
       fontSize: smallHeaderFont,
       marginBottom: "0%",
@@ -158,6 +154,7 @@ function shrinkFormMiddle() {
       marginTop: "26%",
     },700, 'easeOutCirc');
 }
+
 function shrinkFormSmall() {
     var smallHeaderFont = "1.7em";
     var smallSubheaderFont = "1em";
@@ -167,7 +164,6 @@ function shrinkFormSmall() {
       marginBottom: "0%",
       marginTop: "-1%",
       width:"70%"
-
     });
     $("h1").animate({
       fontSize: smallHeaderFont,
@@ -184,7 +180,6 @@ function shrinkFormSmall() {
     $("#object").animate({
       fontSize: smallSubheaderFont,
     });
-    
     $("#dispTweets").delay(300).animate({
       width:"90%",
       opacity: "1.0",
@@ -192,7 +187,6 @@ function shrinkFormSmall() {
       marginLeft: "5%",
       marginTop: "26%",
     },700, 'easeOutCirc');
-    
     $("#chirpButton").animate({
       marginLeft: "75%",
       marginTop: "-12%",
@@ -203,35 +197,23 @@ function shrinkFormSmall() {
       height:"30px",
       width:"30px",
     });
-
 }
 
-
-var counter = 0;
-function myResize(){
-
-   var width_window  = $(window).width();
-   counter++;
-        
-   if (width_window >= 700) {                             
-       shrinkFormLarge();
-   } else if (width_window >= 480){             
-       shrinkFormMiddle();
-   } else {
-	   shrinkFormSmall();    
-   }
+function condResize() {
+    var windowWidth  = $(window).width();
+    if (windowWidth >= 700)              
+        shrinkFormLarge();
+    else if (windowWidth >= 480)           
+        shrinkFormMiddle();
+    else
+        shrinkFormSmall();
 }
-
-
-
-
 
 function randomizeBackground() {
     var bkgColIdx = Math.floor(Math.random()*bkgColors.length);
     var chosenBkgCol = bkgColors[bkgColIdx];
     $('body').css("background", chosenBkgCol);
 }
-
 
 function findAllTweets(emot, obj) {
     var target = document.getElementById('dispTweets');
@@ -246,9 +228,8 @@ function findAllTweets(emot, obj) {
             return;
         }
     }
-   myResize();
-
-       
+    
+    condResize();
 
     /* Perform the actual search */
     var type = classifyEmotion(emot);
@@ -313,23 +294,11 @@ function updateNewTweetsBar(tweets) {
     if (existingBar.length == 0) {
         existingBar = $("<h2>");
         existingBar.attr("id", "newTweetsBar");
-        existingBar.attr("onClick", "clickedNewTweetsBar();");
+        existingBar.attr("onClick", "findAllTweets();");
         $("#dispTweets").prepend(existingBar);
     }
     
     existingBar.html(newText);
-}
-
-function clickedNewTweetsBar() {
-    // var fadeTime = 200;
-
-    // $("#dispTweets").animate({
-    //     opacity: "0.0"
-    // }), fadeTime, 'easeOutCirc';
-    findAllTweets();
-    // $("#dispTweets").delay(fadeTime).animate({
-    //     opacity: "1.0"
-    // }, fadeTime, 'easeOutCirc');
 }
 
 function displayTrending(terms) {
@@ -507,4 +476,3 @@ function containsTweet(arr, obj) {
     }
     return false;
 }
-
