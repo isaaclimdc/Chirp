@@ -137,8 +137,8 @@ function shrinkFormMiddle() {
       fontSize: smallSubheaderFont,
     });
     $("#chirpButton").animate({
-      marginLeft: "80%",
-      marginTop: "-15%",
+      marginLeft: "83%",
+      marginTop: "-53px",
       height:"50px",
       width:"50px",
     });
