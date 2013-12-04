@@ -190,12 +190,12 @@ function shrinkFormSmall() {
     $("#chirpButton").animate({
       marginLeft: "75%",
       marginTop: "-12%",
-      height:"60px",
-      width:"60px",
+      height:"40px",
+      width:"40px",
     });
     $("img").animate({
-      height:"50px",
-      width:"50px",
+      height:"30px",
+      width:"30px",
     });
 }
 
