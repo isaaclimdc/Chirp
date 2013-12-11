@@ -251,8 +251,9 @@ function findTweetsFromTrendingTerm(raw) {
     var emot = terms.slice(0, 1)[0];
     var objWords = terms.slice(1, terms.length);
     var obj = objWords.join(" ");
-    console.log(emot, obj);
+
     findAllTweets(emot, obj);
+    
     $(".form-field#feeling").val(emot);
     $(".form-field#object").val(obj);
 }
